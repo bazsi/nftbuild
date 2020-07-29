@@ -1,0 +1,10 @@
+nftbuild/build
+nftbuild/install
+*~
+libmnl/
+libnetfilter_acct/
+libnetfilter_conntrack/
+libnetfilter_log/
+libnfnetlink/
+libnftnl/
+nftables/

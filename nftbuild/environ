@@ -1,0 +1,6 @@
+CCACHE_DIR=/build/ccache
+PKG_CONFIG_PATH=/install/lib/pkgconfig
+CONFIGURE_OPTS=--prefix=/install
+CONFIGURE_OPTS_nftables=--with-json --with-xtables
+MAKEFLAGS=-j8
+PATH=/nftbuild:/usr/lib/ccache:/usr/lib64/ccache:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin

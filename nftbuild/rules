@@ -1,0 +1,31 @@
+#!/usr/bin/make -f
+
+NFTBUILD_DIR=$(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+ROOT_DIR=$(shell cd $NFTBUILD_DIR/.. && pwd)
+BUILD_DIR=$(NFTBUILD_DIR)/build
+INSTALL_DIR=$(NFTBUILD_DIR)/install
+
+IMAGE_NAME=nftables-shell
+
+DOCKER_ARGS=-e USER_NAME_ON_HOST=$(shell whoami)		\
+        --network=host --privileged				\
+        -v $(NFTBUILD_DIR)/commands:/nftbuild			\
+        -v $(ROOT_DIR):/source					\
+        -v $(BUILD_DIR):/build					\
+        -v $(INSTALL_DIR):/install				\
+        --env-file ${NFTBUILD_DIR}/environ
+
+image:
+	echo $(NFTBUILD_DIR)
+	docker build -t $(IMAGE_NAME) -f $(NFTBUILD_DIR)/image/Dockerfile $(NFTBUILD_DIR)
+
+
+shell: setup
+
+	docker run $(DOCKER_ARGS) --rm -ti $(IMAGE_NAME) bash
+
+.PHONY: setup
+setup:
+	@cd $(ROOT_DIR)
+	@mkdir -p $(BUILD_DIR) || true
+	@mkdir -p $(INSTALL_DIR) || true

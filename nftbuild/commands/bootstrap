@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -e
+
+function autogen_package()
+{
+	local pkg="$1"
+	
+	cd "/source/$pkg"
+	./autogen.sh
+	return $?
+}
+
+function configure_package()
+{
+	local pkg="$1"
+
+	mkdir -p "/build/$pkg" || true
+	cd "/build/$pkg"
+	CONFIGURE_OPTS_PKG=$(eval echo "\$CONFIGURE_OPTS_$pkg")
+	echo "/source/$pkg/configure" $CONFIGURE_OPTS $CONFIGURE_OPTS_PKG
+	"/source/$pkg/configure" $CONFIGURE_OPTS $CONFIGURE_OPTS_PKG
+	return $?
+}
+
+function install_package()
+{
+	local pkg="$1"
+
+	cd "/build/$pkg"
+	make ${MAKEFLAGS} install
+	return $?
+}
+
+PACKAGES=${1:-libmnl libnftnl libnfnetlink libnetfilter_conntrack libnetfilter_acct libnetfilter_log nftables}
+
+for pkg in $PACKAGES; do
+	autogen_package $pkg
+	configure_package $pkg
+	install_package $pkg
+done
