@@ -10,21 +10,44 @@ GROUP_ID=`stat -c '%g' $SOURCE_DIR`
 
 cd /source
 
-if [[ "$USER_ID" -eq 0 ]]; then
-    "$@"
-else
-    if ! getent passwd $USER_ID > /dev/null
-    then
-        groupadd --gid $GROUP_ID $GROUP_NAME &>/dev/null || \
-            groupadd --gid $GROUP_ID dockerguest &>/dev/null || \
-            echo "Failed to add group $GROUP_NAME/$GROUP_ID in docker entrypoint-debian.sh";
-        useradd $USER_NAME --uid=$USER_ID --gid=$GROUP_ID &>/dev/null || \
-            useradd dockerguest --uid=$USER_ID --gid=$GROUP_ID &>/dev/null || \
-            echo "Failed to add user $USER_NAME/$USER_ID in docker entrypoint-debian.sh";
-        mkdir -p /home/$USER_NAME
-        chown $USER_NAME:$GROUP_ID /home/$USER_NAME
+function run_command_as_guest()
+{
+    if [[ "$USER_ID" -eq 0 ]]; then
+        "$@"
+    else
+        if ! getent passwd $USER_ID > /dev/null
+        then
+            groupadd --gid $GROUP_ID $GROUP_NAME &>/dev/null || \
+                groupadd --gid $GROUP_ID dockerguest &>/dev/null || \
+                echo "Failed to add group $GROUP_NAME/$GROUP_ID in docker entrypoint.sh";
+            useradd $USER_NAME --uid=$USER_ID --gid=$GROUP_ID &>/dev/null || \
+                useradd dockerguest --uid=$USER_ID --gid=$GROUP_ID &>/dev/null || \
+                echo "Failed to add user $USER_NAME/$USER_ID in docker entrypoint.sh";
+            mkdir -p /home/$USER_NAME
+            chown $USER_NAME:$GROUP_ID /home/$USER_NAME
+        fi
+
+        exec gosu "${USER_NAME}" "$@"
     fi
 
-    exec gosu "${USER_NAME}" "$@"
-fi
+}
 
+function run_command_as_root()
+{
+    "$@"
+}
+
+case "$1" in
+    tests)
+      run_command_as_root /nftbuild/tests
+      ;;
+    root-shell)
+      run_command_as_root /bin/bash
+      ;;
+    shell)
+      run_command_as_guest /bin/bash
+      ;;
+    *)
+      run_command_as_guest "$@"
+      ;;
+esac
