@@ -7,9 +7,18 @@ ENV LANG C.UTF-8
 
 RUN apt-get update -qq
 RUN apt-get install -y --no-install-recommends --yes gpg wget less joe git
+
+# basic build tools
 RUN apt-get install -y --no-install-recommends --yes build-essential autoconf libtool pkg-config automake bison flex
-RUN apt-get install -y --no-install-recommends --yes asciidoc xsltproc
+
+# -dev packages
 RUN apt-get install -y --no-install-recommends --yes libgmp-dev libreadline-dev python2 libpython2-dev libjansson-dev libxtables-dev
+
+# documentation
+RUN apt-get install -y --no-install-recommends --yes asciidoc xsltproc
+
+# tests
+RUN apt-get install -y --no-install-recommends --yes kmod python
 RUN apt-get install -y --no-install-recommends --yes gosu
 
 RUN mkdir /nftbuild || true
