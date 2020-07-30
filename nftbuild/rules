@@ -15,12 +15,11 @@ DOCKER_ARGS=-e USER_NAME_ON_HOST=$(shell whoami)		\
         -v $(INSTALL_DIR):/install				\
         --env-file ${NFTBUILD_DIR}/environ
 
+DOCKER_BUILD_EXTRA_ARGS ?= 
+
 image:
 	echo $(NFTBUILD_DIR)
-	docker build -t $(IMAGE_NAME) -f $(NFTBUILD_DIR)/image/Dockerfile $(NFTBUILD_DIR)
-
-
-
+	docker build $(DOCKER_BUILD_EXTRA_ARGS) -t $(IMAGE_NAME) -f $(NFTBUILD_DIR)/image/Dockerfile $(NFTBUILD_DIR)
 
 .PHONY: setup
 setup:
