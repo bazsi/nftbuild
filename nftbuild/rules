@@ -8,7 +8,7 @@ INSTALL_DIR=$(NFTBUILD_DIR)/install
 IMAGE_NAME=nftables-shell
 
 DOCKER_ARGS=-e USER_NAME_ON_HOST=$(shell whoami)		\
-        --network=host --privileged				\
+        --privileged \
         -v $(NFTBUILD_DIR)/commands:/nftbuild			\
         -v $(ROOT_DIR):/source					\
         -v $(BUILD_DIR):/build					\
