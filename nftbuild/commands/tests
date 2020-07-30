@@ -1,0 +1,15 @@
+#!/bin/sh
+
+export NFT=/install/sbin/nft
+SRC=/source/nftables
+
+cd $SRC/tests/json_echo
+./run-test.py -l /install/lib/libnftables.so.1
+
+cd $SRC/tests/py
+./nft-test.py -l /install/lib/libnftables.so.1
+
+cd $SRC/tests/monitor
+./run-tests.sh
+cd $SRC/tests/shell
+./run-tests.sh
