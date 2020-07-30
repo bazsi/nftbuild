@@ -20,12 +20,13 @@ image:
 	docker build -t $(IMAGE_NAME) -f $(NFTBUILD_DIR)/image/Dockerfile $(NFTBUILD_DIR)
 
 
-shell: setup
 
-	docker run $(DOCKER_ARGS) --rm -ti $(IMAGE_NAME) bash
 
 .PHONY: setup
 setup:
 	@cd $(ROOT_DIR)
 	@mkdir -p $(BUILD_DIR) || true
 	@mkdir -p $(INSTALL_DIR) || true
+
+root-shell shell tests: setup
+	docker run $(DOCKER_ARGS) --rm -ti $(IMAGE_NAME) $@
