@@ -83,3 +83,36 @@ on the host and remain available at the next restart of the container.
 
 # Running tests
 
+To run all tests, execute this command on the host.
+
+```
+$ ./nftbuild/rules tests
+```
+
+Alternatively, you can log in to the container as root:
+
+```
+$ ./nftbuild/rules root-shell
+```
+
+Then `cd /source/tests/<suite>` and run the associated test program. The
+`/nftbuild/tests` script simply executes all suites in order, like this:
+
+```
+bazsi@bzorp:~/src/netfilter$ cat nftbuild/commands/tests
+#!/bin/sh
+
+export NFT=/install/sbin/nft
+SRC=/source/nftables
+
+cd $SRC/tests/json_echo
+./run-test.py -l /install/lib/libnftables.so.1
+
+cd $SRC/tests/py
+./nft-test.py -l /install/lib/libnftables.so.1
+
+cd $SRC/tests/monitor
+./run-tests.sh
+cd $SRC/tests/shell
+./run-tests.sh
+```
