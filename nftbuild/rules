@@ -17,6 +17,14 @@ DOCKER_ARGS=-e USER_NAME_ON_HOST=$(shell whoami)		\
 
 DOCKER_BUILD_EXTRA_ARGS ?= 
 
+help:
+	@echo "Syntax: $(MAKEFILE_LIST) <target>\n"
+	@echo "Possible targets"
+	@echo "  image -- build the $(IMAGE_NAME) image locally"
+	@echo "  shell -- execute bash inside the image with source/build/install mounted inside"
+	@echo "  root-shell -- execute bash as root"
+	@echo "  tests -- run test suites in the container"
+
 image:
 	echo $(NFTBUILD_DIR)
 	docker build $(DOCKER_BUILD_EXTRA_ARGS) -t $(IMAGE_NAME) -f $(NFTBUILD_DIR)/image/Dockerfile $(NFTBUILD_DIR)
